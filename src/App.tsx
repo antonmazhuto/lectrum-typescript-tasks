@@ -1,3 +1,15 @@
+// Core
 import React, { FC } from 'react';
+import { Provider } from 'react-redux';
 
-export const App: FC = () => <h1>Welcome</h1>;
+// Other
+import { store } from './init/store';
+
+// Domains
+import { Starships } from './bus/starships';
+
+export const App: FC = () => (
+  <Provider store={store}>
+    <Starships />
+  </Provider>
+);
