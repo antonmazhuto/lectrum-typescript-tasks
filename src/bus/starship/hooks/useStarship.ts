@@ -5,29 +5,29 @@ import { StarshipsState } from '../../starships/reducer';
 import { AppState } from '../../../init/rootReducer';
 import { Starship } from '../../starships/types';
 
-export const useStarship = (props: string): Starship => {
+export const useStarship = (props: string): Starship | null => {
   const stateData = useSelector<AppState, AppState>((state) => state);
-  const { data } = useSelector<AppState, StarshipsState>((state) => state.starships);
+  const starships = useSelector<AppState, StarshipsState>((state) => state.starships);
   const matchSelector = createMatchSelector(props);
   const match = matchSelector(stateData);
 
-  // не знаю как проверить существование параметра starship
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-  // @ts-ignore
-  const starshipName = match && match.params.starship;
+  if (!match) {
+    return null;
+  }
 
-  const starship = data.results
-    && data.results.find(
-      (item: Starship) => item.name.replace(/ /g, '-').toLowerCase() === starshipName,
-    );
-  //  не знаю как проверить существование сущностей name, starship_class ....
+  // не знаю как проверить наличие параметра starship в match.params.starship
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
-  const { name, starship_class, manufacturer, crew } = starship || undefined;
-  return {
-    name,
-    starship_class,
-    crew,
-    manufacturer,
-  };
+  const starshipName = match.params.starship;
+
+  if (!starships.data.results.length) {
+    return null;
+  }
+
+  const starship = starships.data.results.find(
+    (item) => (
+      item.name.replace(/ /g, '-').toLowerCase() === starshipName),
+  );
+
+  return starship || null;
 };
